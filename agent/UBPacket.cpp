@@ -36,18 +36,18 @@ QByteArray UBPacket::processpacketsPos(const QByteArray & packet)
   header = packet.mid(0,4)
   switch (header)
 
-  case "0000" // read first 4 numbers of our received packet
-    m_mission_state = STATE_IDLE;
-    break;
-  case "0001"
-    break;
-  case "0010"
-    break;
-  case "0100"
-    break;
-  case "1000"
-    break;
-  default:
-    break;
-}
+    case "0000" // read first 4 numbers of our received packet
+        m_mission_state = STATE_IDLE;
+        break;
+    case "0001"
+        break;
+    case "0010"
+        break;
+    case "0100"
+        break;
+    case "1000"
+        break;
+    default:
+        break;
+ }
 }
