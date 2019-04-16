@@ -2,7 +2,7 @@
 #define UBPACKET_H
 
 #include <QObject>
-#include <QGeocoordinate>
+#include <QGeoCoordinate>
 
 class UBPacket
 {
@@ -20,7 +20,7 @@ public slots:
 
     QByteArray packetize(void);
     void depacketize(const QByteArray &packet);
-    QByteArray packetizePos(QGeocoordinate pos);
+    QByteArray packetizePos(QGeoCoordinate pos);
     QByteArray processpacketsPos(const QByteArray & packet);
 protected:
     quint8 m_srcID;
