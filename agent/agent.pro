@@ -1,5 +1,5 @@
 QT -= gui
-
+QT += positioning #Using QGeocoorindate Class using its qmake
 CONFIG += c++11 console
 CONFIG -= app_bundle
 
