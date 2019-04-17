@@ -1,6 +1,6 @@
 #include "UBAgent.h"
 #include "UBNetwork.h"
-
+//#include "UBPacket.h"
 #include "UBConfig.h"
 
 #include <QTimer>
@@ -30,7 +30,6 @@ void UBAgent::startAgent() {
         {{"I", "instance"}, "Set instance (ID) of the agent", "id"},
     });
 
-   qInfo() << "HELLOOOOOOO";
 //    parser.process(*QCoreApplication::instance());
     parser.parse(QCoreApplication::arguments());
 
@@ -144,10 +143,12 @@ void UBAgent::dataReadyEvent(quint8 srcID, QByteArray data) {
 }
 
 void UBAgent::missionTracker() {
-    previewpos = currentpos;
+    /*previewpos = currentpos;
     currentpos = m_mav->coordinate();
     double bearing = previewpos.azimuthTo(currentpos); // calculates drone bearing as integer
-    qInfo()<<"bearing = " << bearing << endl ; //displays bearing value in degrees
+    qInfo()<<"bearing = " << bearing << endl ; // displays value of bearing in degrees
+    UBPacket pkt;
+    pkt.packetizePos(currentpos, previewpos);*/
     switch (m_mission_stage) {
     case STAGE_IDLE:
         stageIdle();
@@ -189,7 +190,7 @@ void UBAgent::stageMission() {
     if (m_mission_data.stage == 0) {
         m_mission_data.stage++;
 
-        dest = m_mav->coordinate().atDistanceAndAzimuth(10, 90); // 0 -> North, 90 (M_PI / 2) -> East
+        dest = m_mav->coordinate().atDistanceAndAzimuth(100, 90); // 0 -> North, 90 (M_PI / 2) -> East
         m_mav->guidedModeGotoLocation(dest);
 
         return;
@@ -211,3 +212,4 @@ void UBAgent::stageMission() {
         m_mission_stage = STAGE_LAND;
     }
 }
+
