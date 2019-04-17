@@ -2,7 +2,7 @@
 #define UBAGENT_H
 
 #include <QObject>
-
+#include <QGeoCoordinate>
 class QTimer;
 class Vehicle;
 class UBNetwork;
@@ -52,9 +52,11 @@ protected:
         }
     } m_mission_data;
 
-protected:    
+protected:
     Vehicle* m_mav;
     UBNetwork* m_net;
+    QGeoCoordinate currentpos;
+    QGeoCoordinate previewpos;
 
     QTimer* m_timer;
 };
