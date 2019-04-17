@@ -30,6 +30,7 @@ void UBAgent::startAgent() {
         {{"I", "instance"}, "Set instance (ID) of the agent", "id"},
     });
 
+   qInfo() << "HELLOOOOOOO";
 //    parser.process(*QCoreApplication::instance());
     parser.parse(QCoreApplication::arguments());
 
@@ -120,6 +121,8 @@ void UBAgent::armedChangedEvent(bool armed) {
     m_mission_data.reset();
     m_mission_stage = STAGE_TAKEOFF;
     qInfo() << "Mission starts...";
+    currentpos = m_mav->coordinate(); //initializing current and previous position
+    previewpos = currentpos;
 
 //    m_mav->guidedModeTakeoff();
     m_mav->sendMavCommand(m_mav->defaultComponentId(),
@@ -141,6 +144,10 @@ void UBAgent::dataReadyEvent(quint8 srcID, QByteArray data) {
 }
 
 void UBAgent::missionTracker() {
+    previewpos = currentpos;
+    currentpos = m_mav->coordinate();
+    double bearing = previewpos.azimuthTo(currentpos); // calculates drone bearing as integer
+    qInfo()<<"bearing = " << bearing << endl ;
     switch (m_mission_stage) {
     case STAGE_IDLE:
         stageIdle();
