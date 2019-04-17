@@ -147,7 +147,7 @@ void UBAgent::missionTracker() {
     previewpos = currentpos;
     currentpos = m_mav->coordinate();
     double bearing = previewpos.azimuthTo(currentpos); // calculates drone bearing as integer
-    qInfo()<<"bearing = " << bearing << endl ;
+    qInfo()<<"bearing = " << bearing << endl ; //displays bearing value in degrees
     switch (m_mission_stage) {
     case STAGE_IDLE:
         stageIdle();
