@@ -9,6 +9,7 @@ class UBPacket
 public:
     explicit UBPacket();
 
+
 public slots:
     void setSrcID(quint8 srcID) {m_srcID = srcID;}
     void setDesID(quint8 desID) {m_desID = desID;}
@@ -21,8 +22,8 @@ public slots:
     QByteArray packetize(void);
     void depacketize(const QByteArray &packet);
     QByteArray packetizePos(QGeoCoordinate currentpos, QGeoCoordinate previewpos);
-    QByteArray processPacket(const QByteArray &packet);
-    void depacketizePos(const QByteArray &packet);
+    UBPacket depacketizepos(const QByteArray &packet);
+    UBPacket processPacket(const QByteArray &packet);
 protected:
     quint8 m_srcID;
     quint8 m_desID;
