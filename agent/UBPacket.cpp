@@ -33,12 +33,14 @@ void UBPacket::depacketize(const QByteArray& packet) {
 
     m_payload = packet.mid(0 + sizeof(quint8) + sizeof(quint8));
 }
-/*void depacketizepos(const QByteArray &packet){
+UBPacket depacketizepos(const QByteArray &packet){ // returns packet
   QByteArray header = packet.mid(0,4);
-  depacketize_data.currentpos = data.mid(0+4, 10).toDouble(), data.mid(0+4+10, 10).toDouble(), data.mid(0+4+10+3, 10).toDouble();
+   double m_lat = packet.mid(0+4, 10).toDouble();
+   double m_lon =  packet.mid(0+4+10, 10).toDouble();
+   double m_bearing = packet.mid(0+4+10+3, 10).toDouble();
 }
 
-QByteArray UBPacket::processpacket(const QByteArray &packet)
+ UBPacket processPacket(const QByteArray &packet)
 {
   QByteArray opt1("0000"); // first 4 numbers of received packets
   QByteArray opt2("0001");
@@ -71,4 +73,23 @@ QByteArray UBPacket::processpacket(const QByteArray &packet)
     qInfo() << "Header not supported";
 
   }
-}*/
+}
+/*QByteArray UBPacket::processPacket(const QByteArray & packet) // the paceket received from server to instruct the drone
+{
+
+  QByteArray header = packet.mid(0,4);
+  switch (header)
+    case "0000" // read first 4 numbers of our received packet
+        m_mission_state = STATE_IDLE;
+        break;
+    case "0001"
+        break;
+    case "0010"
+        break;
+    case "0100"
+        break;
+    case "1000"
+        break;
+    default:
+        break;
+ }*/
