@@ -57,6 +57,7 @@ protected:
     UBNetwork* m_net;
     QGeoCoordinate currentpos;
     QGeoCoordinate previewpos;
+    bool m_NoFlyZone;
 
     QTimer* m_timer;
 };
