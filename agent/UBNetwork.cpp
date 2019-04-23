@@ -30,7 +30,8 @@ void UBNetwork::dataReadyEvent() {
         }
 
         UBPacket packet;
-        packet.depacketize(m_data.left(bytes));
+        packet.processPacket(m_data.left(bytes));
+        //packet.depacketize(m_data.left(bytes));
         m_data.remove(0, bytes + qstrlen(PACKET_END));
 
         if (packet.getDesID() == m_id || packet.getDesID() == BROADCAST_ID) {
