@@ -21,8 +21,9 @@ public slots:
 
     QByteArray packetize(void);
     void depacketize(const QByteArray &packet);
+    void depacketizeNoFly();
     QByteArray packetizePos(QGeoCoordinate currentpos, QGeoCoordinate previewpos);
-    UBPacket depacketizepos(const QByteArray &packet);
+    void depacketizePos();
     UBPacket processPacket(const QByteArray &packet);
 protected:
     quint8 m_srcID;
