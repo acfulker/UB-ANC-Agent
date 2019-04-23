@@ -1,6 +1,6 @@
 #include "UBAgent.h"
 #include "UBNetwork.h"
-//#include "UBPacket.h"
+#include "UBPacket.h"
 #include "UBConfig.h"
 
 #include <QTimer>
@@ -101,8 +101,16 @@ void UBAgent::vehicleRemovedEvent(Vehicle* mav) {
 }
 
 void UBAgent::armedChangedEvent(bool armed) {
+
     if (!armed) {
         m_mission_stage = STAGE_IDLE;
+        return;
+    }
+    m_NoFlyZone = true;
+    if(m_NoFlyZone == true){
+        m_mission_stage = STAGE_IDLE;
+        m_mav -> setArmed(false);
+        qInfo()<< "You are in the no fly zone, you will not be able to arm your drone";
         return;
     }
 
@@ -143,12 +151,12 @@ void UBAgent::dataReadyEvent(quint8 srcID, QByteArray data) {
 }
 
 void UBAgent::missionTracker() {
-    /*previewpos = currentpos;
+    previewpos = currentpos;
     currentpos = m_mav->coordinate();
-    double bearing = previewpos.azimuthTo(currentpos); // calculates drone bearing as integer
-    qInfo()<<"bearing = " << bearing << endl ; // displays value of bearing in degrees
+  //  double bearing = previewpos.azimuthTo(currentpos); // calculates drone bearing as integer
+  //  qInfo()<<"bearing = " << bearing << endl ;  // displays value of bearing in degrees
     UBPacket pkt;
-    pkt.packetizePos(currentpos, previewpos);*/
+    pkt.packetizePos(currentpos, previewpos);
     switch (m_mission_stage) {
     case STAGE_IDLE:
         stageIdle();
@@ -212,4 +220,3 @@ void UBAgent::stageMission() {
         m_mission_stage = STAGE_LAND;
     }
 }
-
