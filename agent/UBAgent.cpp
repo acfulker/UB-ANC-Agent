@@ -106,13 +106,13 @@ void UBAgent::armedChangedEvent(bool armed) {
         m_mission_stage = STAGE_IDLE;
         return;
     }
-    m_NoFlyZone = true;
+    /*m_NoFlyZone = true;
     if(m_NoFlyZone == true){
         m_mission_stage = STAGE_IDLE;
         m_mav -> setArmed(false);
         qInfo()<< "You are in the no fly zone, you will not be able to arm your drone";
         return;
-    }
+    }*/
 
     if (m_mav->altitudeRelative()->rawValue().toDouble() > POINT_ZONE) {
         qWarning() << "The mission can not start while the drone is airborne!";
@@ -153,10 +153,16 @@ void UBAgent::dataReadyEvent(quint8 srcID, QByteArray data) {
 void UBAgent::missionTracker() {
     previewpos = currentpos;
     currentpos = m_mav->coordinate();
-  //  double bearing = previewpos.azimuthTo(currentpos); // calculates drone bearing as integer
-  //  qInfo()<<"bearing = " << bearing << endl ;  // displays value of bearing in degrees
-    UBPacket pkt;
-    pkt.packetizePos(currentpos, previewpos);
+    qInfo()<<"currentpos lat: "<< currentpos.latitude()<<"currentpos lon: "<< currentpos.longitude()<<endl;
+    double bearing = previewpos.azimuthTo(currentpos); // calculates drone bearing as integer
+    qInfo()<<"bearing = " << bearing << endl ;  // displays value of bearing in degrees
+    UBPacket txPkt;
+    UBPacket rxPkt;
+    QByteArray instruction = txPkt.packetizePos(currentpos, previewpos);
+    rxPkt.processPacket(instruction);
+    qInfo()<<"m_lat: "<<rxPkt.getLat()<<"m_lon: "<<rxPkt.getLon()<< endl;
+
+
     switch (m_mission_stage) {
     case STAGE_IDLE:
         stageIdle();
