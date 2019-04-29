@@ -1,5 +1,5 @@
 #include "UBAgent.h"
-#include "UBNetwork.h"
+#include "UBSerial.h"
 #include "UBPacket.h"
 #include "UBConfig.h"
 
@@ -143,7 +143,7 @@ void UBAgent::flightModeChangedEvent(QString mode) {
     qInfo() << mode;
 }
 
-void UBAgent::dataReadyEvent(quint8 srcID, QByteArray data) {
+void UBAgent::dataReadyEvent(UBPacket data) {
     Q_UNUSED(data)
     if(srcID == m_mav->id() - 1 && !m_mav->armed()) {
         m_mav->setArmed(true);

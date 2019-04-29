@@ -25,7 +25,7 @@ protected slots:
     void armedChangedEvent(bool armed);
     void flightModeChangedEvent(QString mode);
 
-    void dataReadyEvent(quint8 srcID, QByteArray data);
+    void dataReadyEvent(UBPacket data);
     void missionTracker();
 
 protected:
