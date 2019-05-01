@@ -2,7 +2,7 @@
 #include "UBSerial.h"
 #include "UBPacket.h"
 #include "UBConfig.h"
-
+#include "UBNetwork.h"
 #include <QTimer>
 #include <QCommandLineParser>
 
@@ -15,7 +15,8 @@ UBAgent::UBAgent(QObject *parent) : QObject(parent),
 {
     m_net = new UBNetwork;
     connect(m_net, SIGNAL(dataReady(quint8, QByteArray)), this, SLOT(dataReadyEvent(quint8, QByteArray)));
-
+    m_serial = new UBSerial;
+    connect(m_serial, SIGNAL(dataReadySerial(UBPacket)), this, SLOT(dataReadyEvent(UBPacket)));
     m_timer = new QTimer;
     connect(m_timer, SIGNAL(timeout()), this, SLOT(missionTracker()));
 
@@ -143,24 +144,34 @@ void UBAgent::flightModeChangedEvent(QString mode) {
     qInfo() << mode;
 }
 
-void UBAgent::dataReadyEvent(UBPacket data) {
+void UBAgent::dataReadyEvent(quint8 srcID, QByteArray data) {
     Q_UNUSED(data)
     if(srcID == m_mav->id() - 1 && !m_mav->armed()) {
         m_mav->setArmed(true);
     }
 }
+void UBAgent::dataReadyEventSerial(UBPacket packet){
+
+}
+
 
 void UBAgent::missionTracker() {
     previewpos = currentpos;
     currentpos = m_mav->coordinate();
+    NoFly = 1;
     qInfo()<<"currentpos lat: "<< currentpos.latitude()<<"currentpos lon: "<< currentpos.longitude()<<endl;
     double bearing = previewpos.azimuthTo(currentpos); // calculates drone bearing as integer
     qInfo()<<"bearing = " << bearing << endl ;  // displays value of bearing in degrees
     UBPacket txPkt;
     UBPacket rxPkt;
+    UBPacket txPkt2;
+    UBPacket rxPkt2;
     QByteArray instruction = txPkt.packetizePos(currentpos, previewpos);
+    QByteArray instruction2 = txPkt2.packetizeNoFly(NoFly);
     rxPkt.processPacket(instruction);
+    rxPkt2.processPacket(instruction2);
     qInfo()<<"m_lat: "<<rxPkt.getLat()<<"m_lon: "<<rxPkt.getLon()<< endl;
+    qInfo()<<"m_NoFlyZone"<<rxPkt2.getNoFly()<<endl;
 
 
     switch (m_mission_stage) {
