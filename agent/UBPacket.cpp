@@ -28,9 +28,11 @@ QByteArray UBPacket::packetizePos(QGeoCoordinate currentpos, QGeoCoordinate prev
   return header + lat + lon + bearingarray;
 }
 
-/*QByteArray UBPacket::packetizeNoFly() { //in progress..
-  QByteArray NoFlyZone
-}*/
+QByteArray UBPacket::packetizeNoFly(quint8 NoFly) { //in progress..
+  QByteArray header ("0");
+  QByteArray NoFlyZone(((char*)(&NoFly)), sizeof(quint8));
+  return header + NoFlyZone;
+}
 
 void UBPacket::depacketize(const QByteArray& packet) {
     m_srcID = *((quint8*)(packet.mid(0, sizeof(quint8)).data()));
@@ -45,7 +47,7 @@ void UBPacket::depacketizePos(){ //
 }
 
 void UBPacket::depacketizeNoFly(){
-  m_NoFlyZone = *((quint8*)(m_payload.mid(0+1, 1).data()));
+  m_NoFlyZone = *((quint8*)(m_payload.mid(0+1, sizeof(quint8)).data()));
 }
 
 void UBPacket::processPacket(const QByteArray &instruction)
