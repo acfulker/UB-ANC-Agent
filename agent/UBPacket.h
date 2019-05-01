@@ -26,6 +26,7 @@ public slots:
     void depacketize(const QByteArray &packet);
     void depacketizeNoFly();
     QByteArray packetizePos(QGeoCoordinate currentpos, QGeoCoordinate previewpos);
+    QByteArray packetizeNoFly(quint8 NoFly);
     void depacketizePos();
     void processPacket(const QByteArray &packet);
 protected:
