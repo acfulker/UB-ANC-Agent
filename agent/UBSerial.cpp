@@ -1,20 +1,6 @@
 #include "UBAgent.h"
 #include "UBSerial.h"
-//#include "UBPacket.h"
-//#include "UBConfig.h"
-//#include <QTimer>
-//#include <QCommandLineParser>
-//#include "Vehicle.h"
-//#include "TCPLink.h"
-//#include "QGCApplication.h"
-//
-//
-//SerialConfiguration* serial = new SerialConfiguration("Serial Port");
-//serial->setBaud(BAUD_RATE);
-//serial->setPortName(SERIAL_PORT);
-//
-
-
+#include "UBConfig.h"
 #include <QHostAddress>
 
 UBSerial::UBSerial(QSerialPort *parent) : QSerialPort(parent), m_id(0) {
@@ -45,7 +31,7 @@ void UBSerial::dataReadyEvent() {
         m_data.remove(0, bytes + qstrlen(PACKET_END));
 
         if (packet.getDesID() == m_id || packet.getDesID() == BROADCAST_ID) {
-            emit dataReady(packet);
+            emit dataReadySerial(packet);
 
             qInfo() << "Packet Received | From " << packet.getSrcID() << " to " << packet.getDesID() << " | Size: " << packet.getPayload().size();
         }
