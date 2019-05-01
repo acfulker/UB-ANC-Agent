@@ -3,9 +3,11 @@
 
 #include <QObject>
 #include <QGeoCoordinate>
+#include "UBPacket.h"
 class QTimer;
 class Vehicle;
 class UBNetwork;
+class UBSerial;
 
 class UBAgent : public QObject
 {
@@ -24,8 +26,8 @@ protected slots:
 
     void armedChangedEvent(bool armed);
     void flightModeChangedEvent(QString mode);
-
-    void dataReadyEvent(UBPacket data);
+    void dataReadyEvent(quint8 srcID, QByteArray data);
+    void dataReadyEventSerial(UBPacket pkt);
     void missionTracker();
 
 protected:
@@ -55,8 +57,10 @@ protected:
 protected:
     Vehicle* m_mav;
     UBNetwork* m_net;
+    UBSerial* m_serial;
     QGeoCoordinate currentpos;
     QGeoCoordinate previewpos;
+    quint8 NoFly;
     bool m_NoFlyZone;
 
     QTimer* m_timer;
