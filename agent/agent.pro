@@ -1,5 +1,5 @@
 QT -= gui
-QT += positioning #Using QGeocoorindate Class using its qmake
+
 CONFIG += c++11 console
 CONFIG -= app_bundle
 
@@ -24,12 +24,14 @@ HEADERS += \
     UBAgent.h \
     UBPacket.h \
     UBNetwork.h \
+    UBSerial.h \
 
 SOURCES += \
     main.cc \
     UBAgent.cpp \
     UBPacket.cpp \
     UBNetwork.cpp \
+    UBSerial.cpp \
 
 #
 # QGroundControl Library
