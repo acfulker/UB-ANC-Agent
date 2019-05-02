@@ -2,9 +2,53 @@
 #include "UBSerial.h"
 #include "UBConfig.h"
 #include <QHostAddress>
+#include <QObject>
 
+QSerialPort *serial;
 UBSerial::UBSerial(QSerialPort *parent) : QSerialPort(parent), m_id(0) {
-    connect(this, SIGNAL(readyRead()), this, SLOT(dataReadyEvent()));
+    serial = new QSerialPort(this);
+    connect(serial, SIGNAL(readyRead()), this, SLOT(dataReadyEvent()));
+    openSerialPort();
+}
+void UBSerial::openSerialPort()
+{
+    serial->setPortName(SERIAL_PORT);
+    serial->setBaudRate(BAUD_RATE);
+    if (serial->open(QIODevice::ReadWrite)) {
+        showStatusMessage("Connectedd");
+    } else {
+        showStatusMessage(tr("Open error"));
+    }
+}
+
+void UBSerial::closeSerialPort()
+{
+    if (serial->isOpen())
+        serial->close();
+    showStatusMessage(tr("Disconnected"));
+}
+
+void UBSerial::writeData(const QByteArray &data)
+{
+    serial->write(data);
+}
+
+void UBSerial::readData()
+{
+   QByteArray data = serial->readAll();
+   qDebug() << data;
+}
+
+void UBSerial::handleError(QSerialPort::SerialPortError error)
+{
+    if (error == QSerialPort::ResourceError) {
+        closeSerialPort();
+    }
+}
+
+void UBSerial::showStatusMessage(const QString &message)
+{
+    qDebug() << message;
 }
 
 void UBSerial::sendData(quint8 desID, QByteArray data) {
@@ -37,3 +81,4 @@ void UBSerial::dataReadyEvent() {
         }
     }
 }
+
