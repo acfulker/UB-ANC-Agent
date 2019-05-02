@@ -1,4 +1,3 @@
-
 #ifndef UBSERIAL_H
 #define UBSERIAL_H
 
@@ -17,6 +16,12 @@ signals:
 public slots:
     void setID(quint8 id) {m_id = id;}
     void sendData(quint8 desID, QByteArray data);
+    void openSerialPort();
+    void closeSerialPort();
+    void writeData(const QByteArray &data);
+    void readData();
+    void handleError(QSerialPort::SerialPortError error);
+    void showStatusMessage(const QString &message);
 
 protected slots:
     void dataReadyEvent();
