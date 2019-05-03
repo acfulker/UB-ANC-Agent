@@ -58,11 +58,11 @@ protected:
     Vehicle* m_mav;
     UBNetwork* m_net;
     UBSerial* m_serial;
-    QGeoCoordinate currentpos;
-    QGeoCoordinate previewpos;
+    QGeoCoordinate m_currentpos;
+    QGeoCoordinate m_previouspos;
     quint8 NoFly;
-    bool m_NoFlyZone;
-
+    bool m_NoFlyZone = false;
+    int m_type;
     QTimer* m_timer;
 };
 
