@@ -8,7 +8,8 @@ class UBPacket
 {
 public:
     explicit UBPacket();
-
+    enum typeEnum{
+      NOFLYZONE = 0, POS = 1};
 
 public slots:
     void setSrcID(quint8 srcID) {m_srcID = srcID;}
@@ -20,6 +21,7 @@ public slots:
     double getLat(void)   {return m_lat;}
     double getLon(void)   {return m_lon;}
     quint8 getNoFly(void) {return m_NoFlyZone;}
+    quint8 getType(void) {return m_type;}
     QByteArray getPayload(void) {return m_payload;}
 
     QByteArray packetize(void);
@@ -28,7 +30,7 @@ public slots:
     QByteArray packetizePos(QGeoCoordinate currentpos, QGeoCoordinate previewpos);
     QByteArray packetizeNoFly(quint8 NoFly);
     void depacketizePos();
-    void processPacket(const QByteArray &packet);
+    void processPacket(const QByteArray &instruction);
 protected:
     quint8 m_srcID;
     quint8 m_desID;
@@ -37,6 +39,7 @@ protected:
     double m_bearing;
     quint8 m_NoFlyZone;
     QByteArray m_payload;
+    int m_type;
 };
 
 #endif // UBPACKET_H
