@@ -16,7 +16,7 @@ UBAgent::UBAgent(QObject *parent) : QObject(parent),
     m_net = new UBNetwork;
     connect(m_net, SIGNAL(dataReady(quint8, QByteArray)), this, SLOT(dataReadyEvent(quint8, QByteArray)));
     m_serial = new UBSerial;
-    connect(m_serial, SIGNAL(dataReadySerial(UBPacket)), this, SLOT(dataReadyEvent(UBPacket)));
+    connect(m_serial, SIGNAL(dataReadySerial(UBPacket)), this, SLOT(dataReadyEventSerial(UBPacket)));
     m_timer = new QTimer;
     connect(m_timer, SIGNAL(timeout()), this, SLOT(missionTracker()));
 
@@ -26,7 +26,7 @@ UBAgent::UBAgent(QObject *parent) : QObject(parent),
 void UBAgent::startAgent() {
     QCommandLineParser parser;
     parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
-
+    //m_serial<<sendData()
     parser.addOptions({
         {{"I", "instance"}, "Set instance (ID) of the agent", "id"},
     });
@@ -103,18 +103,25 @@ void UBAgent::vehicleRemovedEvent(Vehicle* mav) {
 
 void UBAgent::armedChangedEvent(bool armed) {
 
-    if (!armed) {
-        m_mission_stage = STAGE_IDLE;
+    if (!armed && m_NoFlyZone) { // If you are not armed and in No Fly Zone dont arm the drone
+      m_mission_stage = STAGE_IDLE;
+      m_mav -> setArmed(false);
+      qInfo()<< "You are in the no fly zone while drone is on the ground, you will not be able to arm your drone";
+      return;
+
+    }
+    else if(!armed && !m_NoFlyZone){ //If you are not armed and in the Fly Zone arm the drone
+        m_mission_stage = STAGE_TAKEOFF;
+        m_mav -> setArmed(true);
+        qInfo()<< "You are in the fly zone, drone can takeoff";
         return;
     }
-    /*m_NoFlyZone = true;
-    if(m_NoFlyZone == true){
-        m_mission_stage = STAGE_IDLE;
-        m_mav -> setArmed(false);
-        qInfo()<< "You are in the no fly zone, you will not be able to arm your drone";
+    else{ //If you are armed and in the Fly Zone arm the drone and go to set coordinates
+        m_mission_stage = STAGE_LAND;
+        m_mav -> setArmed(true);
+        qInfo()<< "Drone is landing";
         return;
-    }*/
-
+    }
     if (m_mav->altitudeRelative()->rawValue().toDouble() > POINT_ZONE) {
         qWarning() << "The mission can not start while the drone is airborne!";
         return;
@@ -151,8 +158,11 @@ void UBAgent::dataReadyEvent(quint8 srcID, QByteArray data) {
     }
 }
 void UBAgent::dataReadyEventSerial(UBPacket packet){
+   static QGeoCoordinate dest(packet.getLat(), packet.getLon());
+    m_NoFlyZone = packet.getNoFly();
+    m_mav->guidedModeGotoLocation(dest);
+   }
 
-}
 
 
 void UBAgent::missionTracker() {
