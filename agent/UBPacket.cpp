@@ -24,14 +24,14 @@ QByteArray UBPacket::packetizePos(QGeoCoordinate currentpos, QGeoCoordinate prev
   double bearing = previewpos.azimuthTo(currentpos); // calculates drone bearing as integer
   QByteArray bearingarray = QByteArray::number(bearing, 'g', 3);
   bearingarray = bearingarray.rightJustified(3, '0', true); // bearing relative north
-  qInfo()<<header + lat + lon + bearingarray << endl;
+  //qInfo()<<header + lat + lon + bearingarray << endl;
   return header + lat + lon + bearingarray;
 }
 
 QByteArray UBPacket::packetizeNoFly(quint8 NoFly) { //in progress..
   QByteArray header ("0");
   QByteArray NoFlyZone(((char*)(&NoFly)), sizeof(quint8));
-  return header + NoFlyZone;
+  return header + NoFlyZone; 
 }
 
 void UBPacket::depacketize(const QByteArray& packet) {
@@ -44,10 +44,12 @@ void UBPacket::depacketize(const QByteArray& packet) {
 void UBPacket::depacketizePos(){ //
   m_lat = m_payload.mid(0+1, 25).toDouble();
   m_lon =  m_payload.mid(0+1+25, 25).toDouble();
+  m_type = POS;
 }
 
 void UBPacket::depacketizeNoFly(){
   m_NoFlyZone = *((quint8*)(m_payload.mid(0+1, sizeof(quint8)).data()));
+  m_type = NOFLYZONE;
 }
 
 void UBPacket::processPacket(const QByteArray &instruction)
@@ -70,3 +72,4 @@ void UBPacket::processPacket(const QByteArray &instruction)
 
   }
 }
+
