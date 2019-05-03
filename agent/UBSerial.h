@@ -15,7 +15,7 @@ signals:
 
 public slots:
     void setID(quint8 id) {m_id = id;}
-    void sendData(quint8 desID, QByteArray data);
+    void sendData(QByteArray data);
     void openSerialPort();
     void closeSerialPort();
     void writeData(const QByteArray &data);
@@ -29,6 +29,9 @@ protected slots:
 private:
     quint8 m_id;
     QByteArray m_data;
+    QByteArray data;
+    QSerialPort *serial;
+
 };
 
 #endif // UBSERIAL_H
