@@ -103,23 +103,15 @@ void UBAgent::vehicleRemovedEvent(Vehicle* mav) {
 
 void UBAgent::armedChangedEvent(bool armed) {
 
-    if (!armed && m_NoFlyZone) { // If you are not armed and in No Fly Zone dont arm the drone
+    if (!armed) {
       m_mission_stage = STAGE_IDLE;
-      m_mav -> setArmed(false);
-      qInfo()<< "You are in the no fly zone while drone is on the ground, you will not be able to arm your drone";
       return;
 
     }
-    else if(!armed && !m_NoFlyZone){ //If you are not armed and in the Fly Zone arm the drone
-        m_mission_stage = STAGE_TAKEOFF;
-        m_mav -> setArmed(true);
-        qInfo()<< "You are in the fly zone, drone can takeoff";
-        return;
-    }
-    else{ //If you are armed and in the Fly Zone arm the drone and go to set coordinates
-        m_mission_stage = STAGE_LAND;
-        m_mav -> setArmed(true);
-        qInfo()<< "Drone is landing";
+    if(m_NoFlyZone){ //If you are not armed and in the Fly Zone arm the drone
+        m_mission_stage = STAGE_IDLE;
+        m_mav -> setArmed(false);
+        qInfo()<< "You are in no fly zone, drone is disarming";
         return;
     }
     if (m_mav->altitudeRelative()->rawValue().toDouble() > POINT_ZONE) {
@@ -136,8 +128,8 @@ void UBAgent::armedChangedEvent(bool armed) {
     m_mission_data.reset();
     m_mission_stage = STAGE_TAKEOFF;
     qInfo() << "Mission starts...";
-    currentpos = m_mav->coordinate(); //initializing current and previous position
-    previewpos = currentpos;
+    m_currentpos = m_mav->coordinate(); //initializing current and previous position
+    m_previouspos = m_currentpos;
 
 //    m_mav->guidedModeTakeoff();
     m_mav->sendMavCommand(m_mav->defaultComponentId(),
@@ -158,32 +150,36 @@ void UBAgent::dataReadyEvent(quint8 srcID, QByteArray data) {
     }
 }
 void UBAgent::dataReadyEventSerial(UBPacket packet){
-   static QGeoCoordinate dest(packet.getLat(), packet.getLon());
+   m_type = packet.getType();
+   if(m_type ==1) { // you are in the fly zone
+     static QGeoCoordinate dest(packet.getLat(), packet.getLon());
+     m_mav->guidedModeGotoLocation(dest);
+   }
+    if(m_type == 0) // you are in the no fly zone
     m_NoFlyZone = packet.getNoFly();
-    m_mav->guidedModeGotoLocation(dest);
+      if(m_NoFlyZone){
+        qInfo()<<"You are in the no fly zone and cannot fly"<<endl;
+      }
    }
 
-
-
 void UBAgent::missionTracker() {
-    previewpos = currentpos;
-    currentpos = m_mav->coordinate();
-    NoFly = 1;
+    m_previouspos = m_currentpos;
+    m_currentpos = m_mav->coordinate();
+    /*NoFly = 1;
     qInfo()<<"currentpos lat: "<< currentpos.latitude()<<"currentpos lon: "<< currentpos.longitude()<<endl;
     double bearing = previewpos.azimuthTo(currentpos); // calculates drone bearing as integer
-    qInfo()<<"bearing = " << bearing << endl ;  // displays value of bearing in degrees
+    qInfo()<<"bearing = " << bearing << endl ; */ // displays value of bearing in degrees
     UBPacket txPkt;
-    UBPacket rxPkt;
-    UBPacket txPkt2;
-    UBPacket rxPkt2;
-    QByteArray instruction = txPkt.packetizePos(currentpos, previewpos);
-    QByteArray instruction2 = txPkt2.packetizeNoFly(NoFly);
-    rxPkt.processPacket(instruction);
-    rxPkt2.processPacket(instruction2);
-    qInfo()<<"m_lat: "<<rxPkt.getLat()<<"m_lon: "<<rxPkt.getLon()<< endl;
-    qInfo()<<"m_NoFlyZone"<<rxPkt2.getNoFly()<<endl;
-
-
+//    UBPacket rxPkt;
+/*    UBPacket txPkt2;
+    UBPacket rxPkt2; */
+    QByteArray position_update_data = txPkt.packetizePos(m_currentpos, m_previouspos);
+    m_serial->sendData(position_update_data);
+  //  QByteArray instruction2 = txPkt2.packetizeNoFly(NoFly);
+  //  rxPkt.processPacket(instruction);
+  //  rxPkt2.processPacket(instruction2);
+    //qInfo()<<"m_lat: "<<rxPkt.getLat()<<"m_lon: "<<rxPkt.getLon()<< endl;
+  //  qInfo()<<"m_NoFlyZone"<<rxPkt2.getNoFly()<<endl;
     switch (m_mission_stage) {
     case STAGE_IDLE:
         stageIdle();
