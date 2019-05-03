@@ -4,7 +4,6 @@
 #include <QHostAddress>
 #include <QObject>
 
-QSerialPort *serial;
 UBSerial::UBSerial(QSerialPort *parent) : QSerialPort(parent), m_id(0) {
     serial = new QSerialPort(this);
     connect(serial, SIGNAL(readyRead()), this, SLOT(dataReadyEvent()));
@@ -51,12 +50,11 @@ void UBSerial::showStatusMessage(const QString &message)
     qDebug() << message;
 }
 
-void UBSerial::sendData(quint8 desID, QByteArray data) {
+void UBSerial::sendData(QByteArray data) {
     UBPacket packet;
     packet.setSrcID(m_id);
-    packet.setDesID(desID);
+    packet.setDesID(0); //Extra junk ignore
     packet.setPayload(data);
-
     write(packet.packetize().append(PACKET_END));
 }
 
@@ -74,11 +72,10 @@ void UBSerial::dataReadyEvent() {
         //packet.depacketize(m_data.left(bytes));
         m_data.remove(0, bytes + qstrlen(PACKET_END));
 
-        if (packet.getDesID() == m_id || packet.getDesID() == BROADCAST_ID) {
+        if (packet.getDesID() == m_id) {
             emit dataReadySerial(packet);
 
             qInfo() << "Packet Received | From " << packet.getSrcID() << " to " << packet.getDesID() << " | Size: " << packet.getPayload().size();
         }
     }
 }
-
