@@ -108,7 +108,7 @@ void UBAgent::armedChangedEvent(bool armed) {
       return;
 
     }
-    if(m_NoFlyZone){ //If you are not armed and in the Fly Zone arm the drone
+    if(m_NoFlyZone){ //If you are armed and in the no fly zone disarm the drone
         m_mission_stage = STAGE_IDLE;
         m_mav -> setArmed(false);
         qInfo()<< "You are in no fly zone, drone is disarming";
