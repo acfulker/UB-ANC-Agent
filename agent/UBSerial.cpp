@@ -14,9 +14,11 @@ void UBSerial::openSerialPort()
     serial->setPortName(SERIAL_PORT_LOPY);
     serial->setBaudRate(BAUD_RATE_LOPY);
     if (serial->open(QIODevice::ReadWrite)) {
-        showStatusMessage("Connectedd");
+        showStatusMessage("Serial Port LoPy Connected");
+        qInfo()<<"Serial Port LoPy Device has been connected"<<endl;
     } else {
-        showStatusMessage(tr("Open error"));
+        showStatusMessage(tr("Open error for LoPy"));
+        qInfo()<<"Serial Port LoPy Device cannot be connected, error"<<endl;
     }
 }
 
@@ -25,6 +27,7 @@ void UBSerial::closeSerialPort()
     if (serial->isOpen())
         serial->close();
     showStatusMessage(tr("Disconnected"));
+    qInfo()<<"Device is disconnected"<<endl;
 }
 
 void UBSerial::writeData(const QByteArray &data)
