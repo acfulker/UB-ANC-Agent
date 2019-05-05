@@ -11,8 +11,8 @@ UBSerial::UBSerial(QSerialPort *parent) : QSerialPort(parent), m_id(0) {
 }
 void UBSerial::openSerialPort()
 {
-    serial->setPortName(SERIAL_PORT);
-    serial->setBaudRate(BAUD_RATE);
+    serial->setPortName(SERIAL_PORT_LOPY);
+    serial->setBaudRate(BAUD_RATE_LOPY);
     if (serial->open(QIODevice::ReadWrite)) {
         showStatusMessage("Connectedd");
     } else {
