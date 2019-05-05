@@ -12,7 +12,7 @@
 #define PACKET_END      "\r\r\n\n"
 #define BROADCAST_ID    255
 
-#define SERIAL_PORT "COM3"
+#define SERIAL_PORT "ttyACM0"
 #define BAUD_RATE   115200
 #define SERIAL_PORT_LOPY  "/dev/ttyACM0"
 #define BAUD_RATE_LOPY  115200
