@@ -18,8 +18,8 @@ public slots:
     void sendData(QByteArray data);
     void openSerialPort();
     void closeSerialPort();
-    void writeData(const QByteArray &data);
-    void readData();
+  //  void writeData(const QByteArray &data);
+    //void readData();
     void handleError(QSerialPort::SerialPortError error);
     void showStatusMessage(const QString &message);
 
