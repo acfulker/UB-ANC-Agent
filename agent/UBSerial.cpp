@@ -30,16 +30,16 @@ void UBSerial::closeSerialPort()
     qInfo()<<"Device is disconnected"<<endl;
 }
 
-void UBSerial::writeData(const QByteArray &data)
+/*void UBSerial::writeData(const QByteArray &data)
 {
     serial->write(data);
-}
+}*/
 
-void UBSerial::readData()
+/*void UBSerial::readData()
 {
    QByteArray data = serial->readAll();
    qDebug() << data;
-}
+}*/
 
 void UBSerial::handleError(QSerialPort::SerialPortError error)
 {
@@ -58,7 +58,7 @@ void UBSerial::sendData(QByteArray data) {
     packet.setSrcID(m_id);
     packet.setDesID(0); //Extra junk ignore
     packet.setPayload(data);
-    write(packet.packetize().append(PACKET_END));
+    serial->write(packet.packetize().append(PACKET_END));
 }
 
 void UBSerial::dataReadyEvent() {
