@@ -5,12 +5,22 @@
 #include <QObject>
 
 UBSerial::UBSerial(QSerialPort *parent) : QSerialPort(parent), m_id(0) {
-    serial = new QSerialPort(this);
-    connect(serial, SIGNAL(readyRead()), this, SLOT(dataReadyEvent()));
+    //serial = new QSerialPort(this);
+    connect(this, SIGNAL(readyRead()), this, SLOT(dataReadyEvent()));
     openSerialPort();
 }
 void UBSerial::openSerialPort()
 {
+  setPortName(SERIAL_PORT_LOPY);
+  setBaudRate(BAUD_RATE_LOPY);
+  if (open(QIODevice::ReadWrite)) {
+      showStatusMessage("Serial Port LoPy Connected");
+      qInfo()<<"Serial Port LoPy Device has been connected"<<endl;
+  } else {
+      showStatusMessage(tr("Open error for LoPy"));
+      qInfo()<<"Serial Port LoPy Device cannot be connected, error"<<endl;
+  }
+    /*
     serial->setPortName(SERIAL_PORT_LOPY);
     serial->setBaudRate(BAUD_RATE_LOPY);
     if (serial->open(QIODevice::ReadWrite)) {
@@ -20,12 +30,17 @@ void UBSerial::openSerialPort()
         showStatusMessage(tr("Open error for LoPy"));
         qInfo()<<"Serial Port LoPy Device cannot be connected, error"<<endl;
     }
+    */
 }
 
 void UBSerial::closeSerialPort()
 {
-    if (serial->isOpen())
+  if (isOpen()) {
+      close();
+  }
+    /*if (serial->isOpen()) {
         serial->close();
+    }*/
     showStatusMessage(tr("Disconnected"));
     qInfo()<<"Device is disconnected"<<endl;
 }
@@ -58,7 +73,8 @@ void UBSerial::sendData(QByteArray data) {
     packet.setSrcID(m_id);
     packet.setDesID(0); //Extra junk ignore
     packet.setPayload(data);
-    serial->write(packet.packetize().append(PACKET_END));
+    write(packet.packetize().append(PACKET_END));
+    //serial->write(packet.packetize().append(PACKET_END));
 }
 
 void UBSerial::dataReadyEvent() {
@@ -82,3 +98,4 @@ void UBSerial::dataReadyEvent() {
         }
     }
 }
+
