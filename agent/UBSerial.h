@@ -30,7 +30,7 @@ private:
     quint8 m_id;
     QByteArray m_data;
     QByteArray data;
-    QSerialPort *serial;
+    //QSerialPort *serial;
 
 };
 
