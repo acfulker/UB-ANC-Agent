@@ -31,6 +31,7 @@ public slots:
     QByteArray packetizeNoFly(quint8 NoFly);
     void depacketizePos();
     void processPacket(const QByteArray &instruction);
+
 protected:
     quint8 m_srcID;
     quint8 m_desID;
