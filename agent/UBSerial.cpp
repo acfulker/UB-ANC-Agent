@@ -79,13 +79,12 @@ void UBSerial::sendData(QByteArray data) {
 
 void UBSerial::dataReadyEvent() {
     m_data += readAll();
-
     while (true) {
         int bytes = m_data.indexOf(PACKET_END);
         if (bytes == -1) {
             break;
         }
-
+        qInfo()<<"Data received is:"<< m_data << endl;
         UBPacket packet;
         packet.processPacket(m_data.left(bytes));
         //packet.depacketize(m_data.left(bytes));
@@ -98,4 +97,8 @@ void UBSerial::dataReadyEvent() {
         }
     }
 }
-
+// void UBSerial::receiveData(){
+//     m_data = readAll();
+//     qInfo()<<"Data received is:"<< m_data << endl;
+//
+// }
