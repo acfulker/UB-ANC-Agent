@@ -148,11 +148,16 @@ void UBAgent::dataReadyEvent(quint8 srcID, QByteArray data) {
         m_mav->setArmed(true);
     }
 }
+
 void UBAgent::dataReadyEventSerial(UBPacket packet){
    m_type = packet.getType();
    if(m_type ==1) { // you are in the fly zone
-     QGeoCoordinate dest(packet.getLat(), packet.getLon());
-     m_mav->guidedModeGotoLocation(dest);
+     m_lat = packet.getLat();
+     m_lon = packet.getLon();
+     //QGeoCoordinate dest(packet.getLat(), packet.getLon());
+     //m_mav->guidedModeGotoLocation(dest);
+     m_mission_data.reset();
+     m_mission_stage = STAGE_INTERVENTION;
    }
     if(m_type == 0) // you are in the no fly zone
     m_NoFlyZone = packet.getNoFly();
@@ -191,6 +196,9 @@ void UBAgent::missionTracker() {
         break;
     case STAGE_LAND:
         stageLand();
+        break;
+    case STAGE_INTERVENTION:
+        stageIntervention();
         break;
     default:
         break;
@@ -241,4 +249,26 @@ void UBAgent::stageMission() {
         m_mav->guidedModeLand();
         m_mission_stage = STAGE_LAND;
     }
+}
+
+void UBAgent::stageIntervention(){
+    static QGeoCoordinate dest;
+
+    if (m_mission_data.stage == 0) {
+      m_mission_data.stage++;
+      dest.setLatitude(m_lat);
+      dest.setLongitude(m_lon);
+      m_mav->guidedModeGotoLocation(dest);
+      return;
+    }
+
+    if (m_mission_data.stage == 1) {
+        if (m_mav->coordinate().distanceTo(dest) < POINT_ZONE) {
+            m_mission_data.reset();
+            m_mission_stage = STAGE_IDLE;
+        }
+
+        return;
+    }
+
 }
