@@ -27,7 +27,7 @@ protected slots:
     void armedChangedEvent(bool armed);
     void flightModeChangedEvent(QString mode);
     void dataReadyEvent(quint8 srcID, QByteArray data);
-    void dataReadyEventSerial(UBPacket pkt);
+    void dataReadyEventSerial(UBPacket packet);
     void missionTracker();
 
 protected:
@@ -67,4 +67,3 @@ protected:
 };
 
 #endif // UBAGENT_H
-
