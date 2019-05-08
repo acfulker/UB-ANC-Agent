@@ -151,7 +151,7 @@ void UBAgent::dataReadyEvent(quint8 srcID, QByteArray data) {
 void UBAgent::dataReadyEventSerial(UBPacket packet){
    m_type = packet.getType();
    if(m_type ==1) { // you are in the fly zone
-     static QGeoCoordinate dest(packet.getLat(), packet.getLon());
+     QGeoCoordinate dest(packet.getLat(), packet.getLon());
      m_mav->guidedModeGotoLocation(dest);
    }
     if(m_type == 0) // you are in the no fly zone
@@ -169,7 +169,7 @@ void UBAgent::missionTracker() {
     double bearing = previewpos.azimuthTo(currentpos); // calculates drone bearing as integer
     qInfo()<<"bearing = " << bearing << endl ; */ // displays value of bearing in degrees
     UBPacket txPkt;
-//    UBPacket rxPkt;
+    //UBPacket rxPkt;
 /*    UBPacket txPkt2;
     UBPacket rxPkt2; */
     QByteArray position_update_data = txPkt.packetizePos(m_currentpos, m_previouspos);
