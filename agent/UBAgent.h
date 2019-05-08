@@ -35,6 +35,7 @@ protected:
     void stageTakeoff();
     void stageMission();
     void stageLand();
+    void stageIntervention();
 
 protected:
     enum EMissionStage {
@@ -42,6 +43,7 @@ protected:
         STAGE_TAKEOFF,
         STAGE_MISSION,
         STAGE_LAND,
+        STAGE_INTERVENTION,
     } m_mission_stage;
 
     struct SMissionData {
@@ -60,8 +62,9 @@ protected:
     UBSerial* m_serial;
     QGeoCoordinate m_currentpos;
     QGeoCoordinate m_previouspos;
-    quint8 NoFly;
-    bool m_NoFlyZone = false;
+    bool m_NoFlyZone = false; // intervention
+    double m_lat; // intervention
+    double m_lon; // intervention
     int m_type;
     QTimer* m_timer;
 };
