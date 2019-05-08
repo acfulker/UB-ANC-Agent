@@ -14,8 +14,8 @@
 
 #define SERIAL_PORT "ttyACM0"
 #define BAUD_RATE   115200
-#define SERIAL_PORT_LOPY  "/dev/ttyACM0"
-#define BAUD_RATE_LOPY  115200
+#define SERIAL_PORT_LOPY "/dev/ttyACM0"
+#define BAUD_RATE_LOPY 115200
 
 #define POINT_ZONE      1
 #define TAKEOFF_ALT     5
